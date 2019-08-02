@@ -266,6 +266,19 @@ NAN_METHOD(GetFriendMessage) {
   info.GetReturnValue().Set(result);
 }
 
+NAN_METHOD(GetFriendPersonaState) {
+  Nan::HandleScope scope;
+  if (info.Length() < 1 || !info[0]->IsString() ) {
+    THROW_BAD_ARGS("Bad arguments");
+  }
+  std::string steam_id_str(*(v8::String::Utf8Value(info[0])));
+  CSteamID steam_id(utils::strToUint64(steam_id_str));
+  if (!steam_id.IsValid()) {
+    THROW_BAD_ARGS("Steam ID is invalid");
+  }
+  info.GetReturnValue().Set(SteamFriends()->GetFriendPersonaState(steam_id));
+}
+
 void RegisterAPIs(v8::Local<v8::Object> target) {
   InitFriendFlags(target);
   InitFriendRelationship(target);
@@ -282,6 +295,7 @@ void RegisterAPIs(v8::Local<v8::Object> target) {
   SET_FUNCTION("setListenForFriendsMessage", SetListenForFriendsMessages);
   SET_FUNCTION("replyToFriendMessage", ReplyToFriendMessage);
   SET_FUNCTION("getFriendMessage", GetFriendMessage);
+  SET_FUNCTION("getFriendPersonaState", GetFriendPersonaState);
 }
 
 SteamAPIRegistry::Add X(RegisterAPIs);
