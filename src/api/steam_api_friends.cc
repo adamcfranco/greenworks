@@ -271,6 +271,7 @@ NAN_METHOD(GetFriendPersonaName) {
     THROW_BAD_ARGS("Bad arguments");
   }
   std::string steam_id_str(*(Nan::Utf8String(info[0])));
+  
   CSteamID steam_id(utils::strToUint64(steam_id_str));
   if (!steam_id.IsValid()) {
     THROW_BAD_ARGS("Steam ID is invalid");
@@ -354,6 +355,19 @@ NAN_METHOD(ActivateGameOverlayToUser) {
   SteamFriends()->ActivateGameOverlayToUser(pch_dialog_str.data(), steam_id);
 }
 
+NAN_METHOD(GetFriendPersonaState) {
+  Nan::HandleScope scope;
+  if (info.Length() < 1 || !info[0]->IsString() ) {
+    THROW_BAD_ARGS("Bad arguments");
+  }
+  std::string steam_id_str(*(Nan::Utf8String(info[0])));
+  CSteamID steam_id(utils::strToUint64(steam_id_str));
+  if (!steam_id.IsValid()) {
+    THROW_BAD_ARGS("Steam ID is invalid");
+  }
+  info.GetReturnValue().Set(SteamFriends()->GetFriendPersonaState(steam_id));
+}
+
 void RegisterAPIs(v8::Local<v8::Object> target) {
   InitFriendFlags(target);
   InitFriendRelationship(target);
@@ -377,6 +391,7 @@ void RegisterAPIs(v8::Local<v8::Object> target) {
   SET_FUNCTION("setPlayedWith", SetPlayedWith);
   SET_FUNCTION("activateGameOverlayInviteDialog", ActivateGameOverlayInviteDialog);
   SET_FUNCTION("activateGameOverlayToUser", ActivateGameOverlayToUser);
+  SET_FUNCTION("getFriendPersonaState", GetFriendPersonaState);
 }
 
 SteamAPIRegistry::Add X(RegisterAPIs);
