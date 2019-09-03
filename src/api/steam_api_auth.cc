@@ -148,6 +148,12 @@ NAN_METHOD(getTicketAppId) {
   info.GetReturnValue().Set(app_id);
 }
 
+NAN_METHOD(LoggedOn) {
+  Nan::HandleScope scope;
+  bool isLoggedOn = SteamUser()->BLoggedOn();
+  info.GetReturnValue().Set(isLoggedOn);
+}
+
 void RegisterAPIs(v8::Local<v8::Object> target) {
   Nan::Set(target,
            Nan::New("EncryptedAppTicketSymmetricKeyLength").ToLocalChecked(),
@@ -160,6 +166,7 @@ void RegisterAPIs(v8::Local<v8::Object> target) {
   SET_FUNCTION("getTicketSteamId", getTicketSteamId);
   SET_FUNCTION("getTicketAppId", getTicketAppId);
   SET_FUNCTION("cancelAuthTicket", CancelAuthTicket);
+  SET_FUNCTION("loggedOn", LoggedOn);
 }
 
 SteamAPIRegistry::Add X(RegisterAPIs);
